@@ -1,0 +1,4 @@
+# ignore executibles
+*.exe
+.vscode/
+scratch*
