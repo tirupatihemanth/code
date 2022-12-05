@@ -47,8 +47,33 @@ string frequencySort(string s) {
     return s;
 }
 
+
+// 04/12/2022 LC2256-Medium: Minimum Average Difference
+int minimumAverageDifference(vector<int>& v) {
+    if(!v.size()) return -1;
+    long long totalSum = 0, curSum = 0;
+    totalSum = accumulate(v.begin(), v.end(), totalSum);
+    int minAvgDiff = numeric_limits<int>::max(), minIdx=0, curAvgDiff, n=v.size();
+    for(int i=0;i<v.size()-1;i++){
+        curSum += v[i];
+        curAvgDiff = abs(curSum/(i+1)-(totalSum-curSum)/(n-i-1));
+        if(minAvgDiff>curAvgDiff){
+            minAvgDiff = curAvgDiff;
+            minIdx = i;
+        }
+    }
+
+    if(totalSum/n<minAvgDiff) return n-1;
+    return minIdx;
+}
+
+
 int main(int argc, char const *argv[])
 {
-    cout << closeStrings("cabbba", "abbccc")<<endl;   
+    //cout << closeStrings("cabbba", "abbccc")<<endl;   
+    
+    vector<int> v = {1,2,3};
+
+    // cout << minimumAverageDifference(v)<<endl;
     return 0;
 }
