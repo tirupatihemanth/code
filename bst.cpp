@@ -32,7 +32,7 @@ class minheap{
     }
 
     int parent(int i){
-        return (i-1)/2;
+        return (i-1)/2; // does floor automatically.
     }
 
     int left(int i){
@@ -43,7 +43,8 @@ class minheap{
         return 2*i+2;
     }
 
-    // Assuming only given idx is violating minheap property and no other node.
+    // Used only when subtrees are heaps but given idx i.e the root is not heap.
+    // do recursive much simpler in interviews.
     // O(logn) x O(1)
     void heapify(int idx){
         while(idx<size){

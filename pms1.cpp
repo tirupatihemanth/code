@@ -270,24 +270,100 @@ void printGreater(vector<int> &v){
     cout << endl;
 }
 
-// O(mnlogm) x O(m) use priority_queue in merge k lists style.
-// Naive sorting O(mnlogmn) x O(rc) - to make another 1D array
-// Do quickselect O(rc) avg to get median.
-// O(rlog(maxElem-minElem)logc)
-// TODO: 
+// Naive sorting O(mnlogmn) x O(mn) - to make another 1D array
+// O(mnlogm) x O(m) use priority_queue in merge k lists style. Stop popping when you pop the median (mn/2+1)th element.
+// Do quickselect O(mn) avg x O(mn) to get median.
+// Best: O(mlog(maxElem-minElem)logn) x O(1) => uses the already sorted property of rows.
+// Assuming odd sized matrix but similar logic for even sized (avg of two). Odd sized => unique median.
 int medianRowSortedMatrix(int **mat, int m, int n){
+    int min=mat[0][0], max = mat[0][n-1];
+    f(i,m) {
+        min = std::min(min, mat[i][0]);
+        max = std::max(max, mat[i][n-1]);
+    }
 
+    int medPos = (m*n+1)/2;
+    // While loop runs for O(log(max-min)) times.
+    while(min<max){
+        int mid = (min+max)/2;
+        int midPos = 0;
+        // takes O(mlogn);
+        f(i,m){
+            midPos += upper_bound(mat[i], mat[i]+n, mid)-mat[i];
+        }
+
+        // Ensures that we don't miss any element and median if present must be b/w [min, mid].
+        // But odd sized matrix must have a median. So when min==max it must be median present in the matrix.
+        if(midPos<medPos) min = mid+1;
+        else max = mid;
+    }
+    return min;
+}
+
+// O(nlogn)xO(1) assuming sort space complexity is O(1)
+// Given the capacity you have to pickup maximum value of items.
+// The items are divisible i.e you can collect fractional weight
+int fractionalKnapsack(vector<pair<int, int>> &weightNValues, int capacity){
+    sort(weightNValues.begin(), weightNValues.end(), [](auto &x, auto &y){return (float(x.second)/x.first)>(float(y.second)/y.first);});
+    int valueCollected=0;
+    for(int i=0;i<weightNValues.size() && capacity>0;i++){
+        int capacityCollected = min(capacity, weightNValues[i].first);
+        valueCollected+=capacityCollected*(float(weightNValues[i].second)/weightNValues[i].first);
+        capacity-=capacityCollected;
+    }
+    return valueCollected;
+}
+
+// O(nlogn)xO(1). Each child should get 1 chocolate bag. Diff b/w max and min chocolates obtained
+// by children should be minimum.
+int chocolateDistribution(vector<int> &chocolateBags, int children){
+    if(!children || !chocolateBags.size()) return 0;
+    sort(chocolateBags.begin(), chocolateBags.end());
+    int minDiff=INT_MAX;
+    for(int i=0, j=children-1;j<chocolateBags.size();i++, j++){
+        minDiff = min(minDiff, chocolateBags[j]-chocolateBags[i]);
+    }
+    if(minDiff==INT_MAX) return chocolateBags[chocolateBags.size()-1];
+    return minDiff;
+}
+
+// O(nlogn)xO(n)
+vector<int> sortElembyFreq(vector<int> &v){
+    unordered_map<int, int> mp;
+    for(int x:v)mp[x]++;
+    vector<pair<int, int>> vp(mp.begin(), mp.end());
+    sort(vp.begin(), vp.end(), [](auto &x, auto &y){return x.second==y.second?x.first<y.first:x.second > y.second;});
+    int i=0;
+    for(auto &x:vp){
+        while(x.second--) v[i++]=x.first;
+    }
+    return v;
 }
 
 int main(int argc, char const *argv[])
 {
     srand(time(nullptr));
-/*     int n;
+    /* int n;
     cin >> n;
     vector<int> v(n);
     f(i,n) cin>>v[i];
- */
+    sortElembyFreq(v);
+    
+    f(i,n)cout << v[i]<<" ";
+    cout << endl; */
 
+    // cout << chocolateDistribution(v, 5)<<endl;
+
+/*     int n, k;
+    cin >> n >> k;
+    vector<pair<int, int>> weightNValues;
+    f(i,n){
+        int x, y;
+        cin >> x >> y;
+        weightNValues.push_back({x, y});
+    }
+    cout << fractionalKnapsack(weightNValues, k)<<endl;; */
+    
     int m,n;
     cin >> m >> n;
     int *arr[m];
@@ -295,6 +371,8 @@ int main(int argc, char const *argv[])
     f(i,m)f(j,n)cin >> arr[i][j];
 
     cout << medianRowSortedMatrix(arr, m, n)<<endl;;
+
+    
     // printGreater(v);
     // printCeilOnRight(v);
     // kLargestNums(v, 3, 0, n-1);

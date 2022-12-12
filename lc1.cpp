@@ -6,6 +6,9 @@ using namespace std;
 /* RECURSION */
 
 // 27/11/2022 LC509-Easy
+// O(n)xO(1) classic DP problem you can create arr[n] and keep filling values
+// But as you need only prev1 & prev2 to get current val just store only those two 
+// as you virtually build dp array bottom up.
 int fib(int n) {
     if(!n || n==1) return n;
     // return fib(n-1)+fib(n-2);
@@ -19,8 +22,8 @@ int fib(int n) {
 }
 
 // 27/11/2022 LC206-Easy
-// 3 pointer iterative
-ListNode* reverseList(ListNode* head) {
+// 3 pointer iterative i.e default
+ListNode* reverseList_3P(ListNode* head) {
     if(!head) return head;
     ListNode *cur=head, *next=nullptr, *prev=nullptr;
 
@@ -389,14 +392,14 @@ string decodeString(string &s, int &i){
     return res;
 }
 
-// 02/12/2022 LC143-Medium
+// 02/12/2022 LC143-Medium: Reorder List
 // O(N)xO(N)
 void reorderList(ListNode* head) {
     if(!head || !head->next) return;
     stack<ListNode*> sk;
     ListNode *cur = head, *fast=head, *next = head->next;
 
-    //fast && fast->next
+    //while(fast && fast->next)
     //Gets cur to n/2+1 element if n/2 is even
     // n/2 and n/2+1 are mids if n is even.
     // n/2+1 is mid if n is odd.
@@ -424,12 +427,30 @@ void reorderList(ListNode* head) {
     cur->next=nullptr;
 }
 
-// Alt: No stack approach is to reverse second half and merge these two lists alternatively.
-// Alt: Recursive - keep forward head as param and reorder once you hit bottom of dfs.
-// TODO: 
-void reorderList(ListNode* head){
-
+ListNode* reorderList(ListNode* cur, ListNode* head){
+    ListNode* curHead;
+    if(cur) curHead = reorderList(cur->next, head);
+    else return head;
+    if(curHead){
+        if(curHead==cur || curHead->next==cur) return cur->next = nullptr;
+        ListNode *next = curHead->next;
+        curHead->next = cur;
+        cur->next = next;
+        return next;
+    }
+    return curHead;
 }
+
+// 13/12/2022 LC143-Medium: Reorder List
+// Alt: O(n)xO(1) No stack approach is to reverse second half and merge these two lists alternatively.
+// Recursive - keep forward head as param and reorder once you hit bottom of dfs.
+// O(n)xO(n) b/o stackspace during dfs.
+ListNode* reorderList_r(ListNode* head){
+    reorderList(head, head);
+    return head;
+}
+
+
 
 int main(int argc, char const *argv[])
 {

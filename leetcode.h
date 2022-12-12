@@ -1,4 +1,9 @@
 #include <bits/stdc++.h>
+
+#define f(i,n) for(int i=0;i<n;i++)
+#define lli long long int
+#define ulli unsigned long long int
+
 using namespace std;
 
 struct ListNode {
@@ -60,4 +65,21 @@ ListNode* makeList(vector<int> vals){
     head = head->next;
     delete temp;
     return head;
+}
+
+TreeNode* makeBST(vector<int> vals){
+    if(!vals.size()) return nullptr;
+    TreeNode* root = new TreeNode(vals[0]);
+    for(int i=1;i<vals.size();i++){
+        TreeNode* cur = root, *parent;
+        while(cur){
+            parent = cur;
+            if(cur->val>vals[i]) cur = cur->left;
+            else cur = cur->right;
+        }
+        if(parent->val>vals[i]) parent->left = new TreeNode(vals[i]);
+        else parent->right = new TreeNode(vals[i]);
+    }
+
+    return root;
 }

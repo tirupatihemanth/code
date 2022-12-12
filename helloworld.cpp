@@ -72,8 +72,6 @@ bool subk(int arr[], int n, int k){
     partial_sum(arr, arr+n, arr);
     unordered_set<int> set;
     for_each(arr, arr+n, [&set](int x){set.emplace(x);});
-    unordered_set<int>::iterator it;
-    unordered_map<int, int> map;
     
     f(i,n){
         auto it = set.find(arr[i]+k);
