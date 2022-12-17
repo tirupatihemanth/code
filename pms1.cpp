@@ -53,56 +53,6 @@ void print_maxsubk(vector<int> &v, int k){
 }
 
 
-// Balanced paranthesis? #open=#close. Opened latest = closed first. Closed after opened.
-
-bool balanced_paranthesis(const string &s){
-    stack<char> stack;
-    for(char c:s){
-        switch (c)
-        {
-        case ']':
-            if(stack.empty() || stack.top()!='[') return false;
-            stack.pop();
-            break;
-        case ')':
-            if(stack.empty() || stack.top()!='(') return false;
-            stack.pop();
-            break;
-        case '}':
-            if(stack.empty() || stack.top()!='{') return false;
-            stack.pop();
-            break;
-        
-        default:
-            stack.push(c);
-            break;
-        }
-    }
-    return stack.empty();
-}
-
-// Naive: O(n^2)xO(1)
-// O(n)xO(n) since every element is pushed & popped atmost once.
-// Span on a day is the count of days just before & including itself having value <= itself.
-// Previous greater element problem. Next greater element problem.
-void stock_span(vector<int> &v){
-    stack<int> s;
-    for(int i=0;i<v.size();i++){
-        int num=0;
-        while(!s.empty() && v[s.top()]<=v[i]){
-            s.pop();
-        }
-        if(s.empty()){
-            cout << i+1 << " "; 
-        }
-        else{
-            cout << i - s.top() << " ";
-        }
-        s.push(i);
-    }
-    cout << endl;
-}
-
 int partition(vector<int> &v, int start, int end){
     if(start==end) return start;
     swap(v[start+rand()%(end-start+1)], v[end]);

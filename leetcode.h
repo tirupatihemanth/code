@@ -53,7 +53,6 @@ void printList(ListNode *head){
     cout << endl;
 }
 
-
 ListNode* makeList(vector<int> vals){
     ListNode *head = new ListNode, *cur = head;
     for(int x:vals){

@@ -302,6 +302,179 @@ int numDecodings_II(string s) {
     return count[s.length()];
 }
 
+// 13/12/2022 LC931-Medium: Minimum Falling Path Sum
+// O(mn)xO(1) Bottom up DP solution. Alt: Top down can be done.
+int minFallingPathSum(vector<vector<int>>& matrix) {
+    if(!matrix.size()) return 0;
+    int m = matrix.size(), n = matrix[0].size();
+    // You can also do top down DP from i=1 and taking max element in last row
+    for(int i=m-2; i>=0; i--){
+        for(int j=0;j<n;j++){
+            int j1 = max(j-1, 0), j2 = min(j+1, n-1);
+            matrix[i][j] += min({
+                matrix[i+1][j1],
+                matrix[i+1][j],
+                matrix[i+1][j2]
+            });
+        }
+    }
+    return *min_element(matrix[0].begin(), matrix[0].end());
+}
+
+
+// Top Down DP. Remove memo and we just have top-down recursion with overlapping sub-problems -> TLE
+// O(n)xO(n): O(n) b/o element of result is computed only once in O(1) time. O(n) stack space + memo.
+/* 
+    For most DP probs follow these steps
+    STEP 1: Come up with recursion relation: rob(i) = max(curVal+rob(i+2), rob(i+1)); i.e top-down
+    STEP 2: If there are overlapping subproblems use a memo as array/unordered_map => Solved.
+    STEP 3: To improve on stack space. Convert recursive top-down to iterative bottom-up using table/array.
+    STEP 4: To improve on memo space. Based on what previous values are used in recursion store only those N vars.
+ */
+int rob(vector<int>& nums, vector<int> &memo, int start=0) {
+    if(start>=nums.size()) return 0;
+    if(memo[start]!=-1) return memo[start];
+
+    int result = max(nums[start]+rob(nums, memo, start+2), rob(nums, memo, start+1));
+    return memo[start] = result;
+}
+
+// 14/12/2022 LC198-Medium: House Robber
+int rob_r(vector<int> &nums){
+    vector<int> memo(nums.size(), -1);
+    return rob(nums, memo);
+}
+
+// 14/12/2022 LC198-Medium: House Robber
+// O(n)xO(n). O(n) memo. Bottom-up DP using tabulation.
+int rob(vector<int> &nums){
+    vector<int> maxRobbed(nums.size()+2, 0);
+
+    for(int i=nums.size()-1;i>=0;i--){
+        maxRobbed[i] = max(nums[i]+maxRobbed[i+2], maxRobbed[i+1]);
+    }
+
+    return maxRobbed[0];
+}    
+
+// 14/12/2022 LC198-Medium: House Robber
+// O(n) x O(1). Only O(1) memo. Bottom up DP.
+int rob_alt(vector<int> &nums){
+    int prev1=0, prev2=0, result;
+    
+    for(int i=nums.size()-1;i>=0;i--){
+        result = max(nums[i]+prev2, prev1);
+        prev2 = prev1;
+        prev1 = result;
+    }
+
+    return result;
+}  
+
+// Top Down DP.
+int longestCommonSubsequence(string &text1, string &text2, int i, int j, int *memo) {
+    int m = text1.length(), n = text2.length();
+    if(i==m || j==n) return 0;
+    if(memo[i*n+j]!=-1) return memo[i*n+j];
+
+    if(text1[i]==text2[j]){
+        memo[i*n+j] = 1 + longestCommonSubsequence(text1, text2, i+1, j+1, memo);
+    }
+    else
+        memo[i*n+j] = max(
+            longestCommonSubsequence(text1, text2, i+1, j, memo), 
+            longestCommonSubsequence(text1, text2, i, j+1, memo)
+            );
+    
+    return memo[i*n+j];
+}
+
+// 15/12/2022 LC1143-Medium: Longest Common Subsequence
+// O(mn)xO(mn). Top Down DP with memo.
+int longestCommonSubsequence_r(string text1, string text2){
+    int memo[text1.size()][text2.size()];
+    fill(&memo[0][0], &memo[text1.size()-1][text2.size()-1]+1, -1);
+
+    return longestCommonSubsequence(text1, text2, 0, 0, &memo[0][0]);
+}
+
+
+// 15/12/2022 LC1143-Medium: Longest Common Subsequence
+// O(mn)xO(mn). Bottom up DP using tabulation.
+int longestCommonSubsequence(string text1, string text2) {
+    int mat[text1.size()+1][text2.size()+1];
+
+    // Variable sized array initialization not allowed hence use fill
+    // fill works because internally n-dim array is 1d contiguous array
+    fill(&mat[0][0], &mat[text1.size()][text2.size()]+1, 0);
+    
+    for(int i=1;i<=text1.size();i++){
+        for(int j=1;j<=text2.size();j++){
+            if(text1[i-1]==text2[j-1])
+                mat[i][j] = mat[i-1][j-1]+1;
+            else
+                mat[i][j] = max(mat[i-1][j], mat[i][j-1]);
+        }
+    }
+
+    return mat[text1.size()][text2.size()];
+}
+
+
+// 15/12/2022 LC1143-Medium: Longest Common Subsequence
+// Bottomu DP. memo optimized by storing only two columns.
+// O(mn)xO(n)
+int longestCommonSubsequence(string text1, string text2) {
+    int mat[2][text2.size()+1];
+    fill(&mat[0][0], &mat[1][text2.size()]+1, 0);
+    
+    for(int i=1;i<=text1.size();i++){
+        for(int j=1;j<=text2.size();j++){
+            if(text1[i-1]==text2[j-1])
+                mat[i%2][j] = mat[!(i%2)][j-1]+1;
+            else
+                mat[i%2][j] = max(mat[!(i%2)][j], mat[i%2][j-1]);
+        }
+    }
+
+    return mat[text1.size()%2][text2.size()];
+}
+
+
+// 16/12/2022 LC232-Easy: Implement queue using stacks
+// push: O(1). Pop: O(1) amortized. O(n) worst. Since for each element push&pop ops are done utmost twice
+class MyQueue {
+    stack<int> push_sk, pop_sk;
+public:
+    MyQueue() {
+        
+    }
+    
+    void push(int x) {
+        push_sk.push(x);
+    }
+    
+    int pop() {
+        int result = peek();
+        pop_sk.pop();
+        return result;
+    }
+    
+    int peek() {
+        if(pop_sk.empty()){
+            while(!push_sk.empty()){
+                pop_sk.push(push_sk.top());
+                push_sk.pop();
+            }
+        }
+        return pop_sk.top();
+    }
+    
+    bool empty() {
+        return push_sk.empty() && pop_sk.empty();
+    }
+};
+
 int main(int argc, char const *argv[])
 {
     //cout << closeStrings("cabbba", "abbccc")<<endl;   
@@ -315,5 +488,6 @@ int main(int argc, char const *argv[])
     // int m, n;
     // cin >> m >> n;
     // cout <<uniquePaths(m, n)<<endl;
+    cout << longestCommonSubsequence_r("abcde", "ace")<< endl;
     return 0;
 }

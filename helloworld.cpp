@@ -16,28 +16,6 @@ bool is_palindrome(string s){
     return s[0]==s[s.length()-1] && is_palindrome(s.substr(1, s.length()-2));
 }
 
-void powerset(string s, int idx, string curr){
-    if(idx==s.length()){
-        cout << curr<< " ";
-        return;
-    }
-    powerset(s, idx+1, curr);
-    powerset(s, idx+1, curr+s[idx]);
-}
-
-void permutate(string &s, int idx){
-
-    if(idx==s.length()-1){
-        cout << s << " ";
-    }
-
-    for(int i=idx;i<s.length();i++){
-        swap(s[idx], s[i]);
-        permutate(s, idx+1);
-        swap(s[idx], s[i]);
-    }
-}
-
 int digit_sum(int n){
     if(n<10)return n;
     return n%10 + digit_sum(n/10);
