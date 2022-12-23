@@ -424,7 +424,7 @@ int longestCommonSubsequence(string text1, string text2) {
 // 15/12/2022 LC1143-Medium: Longest Common Subsequence
 // Bottomu DP. memo optimized by storing only two columns.
 // O(mn)xO(n)
-int longestCommonSubsequence(string text1, string text2) {
+int longestCommonSubsequence_alt(string text1, string text2) {
     int mat[2][text2.size()+1];
     fill(&mat[0][0], &mat[1][text2.size()]+1, 0);
     
@@ -475,6 +475,281 @@ public:
     }
 };
 
+// 19/12/2022 LC1971: Find if path exists in graph.
+// Like BFS you have to set visited true while inserting into stack itself. Else You wil insert
+// same node multiple times into the stack.
+// O(V+E)xO(V)
+bool validPath_dfs_i(int n, vector<vector<int>>& edges, int source, int destination) {
+    vector<int> adj[n];
+    for(auto &v: edges){
+        adj[v[0]].push_back(v[1]);
+        adj[v[1]].push_back(v[0]);
+    }
+
+    bool visited[n];
+    fill(visited, visited+n, false);
+    stack<int> sk;
+
+    sk.push(source);
+    visited[source]=true;
+    while(!sk.empty()){
+        int u = sk.top();
+        sk.pop();
+        if(u==destination) return true;
+        
+        for(int v:adj[u]){
+            if(visited[v]) continue;
+            sk.push(v);
+            visited[v]=true;
+        }
+    }
+    return false;
+}
+
+// 19/12/2022 LC1971: Find if path exists in graph.
+// O(V+E)xO(E)
+bool validPath_bfs(int n, vector<vector<int>>& edges, int source, int destination) {
+    vector<int> adj[n];
+    for(auto &v: edges){
+        adj[v[0]].push_back(v[1]);
+        adj[v[1]].push_back(v[0]);
+    }
+
+    bool visited[n];
+    fill(visited, visited+n, false);
+    queue<int> q;
+
+    q.push(source);
+    visited[source]=true;
+    while(!q.empty()){
+        int u = q.front();
+        q.pop();
+        if(u==destination) return true;
+        for(int v:adj[u]){
+            if(visited[v]) continue;
+            visited[v]=true;
+            q.push(v);
+        }
+    }
+    return false;
+}
+
+
+bool validPath_dfs(vector<int> adj[], int s, int destination, bool visited[]){
+    if(s == destination) return true;
+    visited[s] = true;
+    for(int v: adj[s]){
+        if(visited[v]) continue;
+        if(validPath_dfs(adj, v, destination, visited)) return true;
+    }
+
+    return false;
+}
+
+
+// 19/12/2022 LC1971: Find if path exists in graph.
+// O(V+E)xO(E)
+bool validPath(int n, vector<vector<int>>& edges, int source, int destination) {
+    vector<int> adj[n];
+    for(auto &v: edges){
+        adj[v[0]].push_back(v[1]);
+        adj[v[1]].push_back(v[0]);
+    }
+
+    bool visited[n];
+    fill(visited, visited+n, false);
+    return validPath_dfs(adj, source, destination, visited);
+}
+
+
+void dfs(vector<vector<int>> &rooms, int s, bool visited[]){
+    visited[s]=true;
+    for(int v:rooms[s]){
+        if(!visited[v]) dfs(rooms, v, visited);
+    }
+}
+
+
+// 20/12/2022 LC841-Medium: Keys and Rooms
+// O(V+E)xO(V) Basically given adjacency list we are doing dfs to see if it's connected or not
+bool canVisitAllRooms(vector<vector<int>>& rooms) {
+    bool visited[rooms.size()];
+    fill(visited, visited+rooms.size(), false);
+    dfs(rooms, 0, visited);
+    return all_of(visited, visited+rooms.size(), [](auto x){return x;});
+}
+
+
+bool twoColour_dfs(vector<int> adj[], int s, short colour[]){
+    for(int &v:adj[s]){
+        if(colour[v]==-1){
+            colour[v]=!colour[s];
+            twoColour_dfs(adj, v, colour);
+        }
+        else if(colour[v]==colour[s]){
+            return false;
+        }
+    }
+    return true;
+}
+
+// 21/12/2022 LC886-Possible Bipartition
+// A graph is bipartite iff it's two colourable
+// Alt: A graph is bipartite iff it doesn't have an odd cycle
+// O(V+E)xO(V+E)
+bool possibleBipartition(int n, vector<vector<int>>& dislikes) {
+    vector<int> adj[n+1];
+    for(auto &v:dislikes){
+        adj[v[0]].push_back(v[1]);
+        adj[v[1]].push_back(v[0]);
+    }
+    short colour[n+1];
+    fill(colour, colour+n+1, -1);
+    for(int i=1;i<n+1;i++){
+        if(colour[i]!=-1) continue;
+        colour[i]=0;
+        if(!twoColour_dfs(adj, i, colour)) return false;
+    }
+    return true;
+}
+
+
+void dfs1(vector<int> adj[], int s, vector<int> &result, int numNodes[]){
+    numNodes[s]=1;
+    for(int v:adj[s]){
+        if(numNodes[v]) continue;
+        dfs1(adj, v, result, numNodes);
+        numNodes[s]+=numNodes[v];
+        result[s]+=result[v]+numNodes[v];
+    }
+}
+
+void dfs2(vector<int> adj[], int s, int parent, vector<int> &result, int numNodes[]){
+    for(int v: adj[s]){
+        if(parent==v)continue;
+        // result[v] = result[s]-numNodes[v]+(n-numNodes[v])
+        result[v] = result[s]-2*numNodes[v]+result.size();
+        dfs2(adj, v, s, result, numNodes);
+    }
+}
+
+
+// 22/12/2022 LC834-Hard: Sum of Distances in Tree
+// Technique called ***** RE-ROOTING *****
+// When we move the room from one node to it's adjacent then sum of all distances from cur node
+// will decrease by 1 for No. of adj subtree nodes rooted at adj node and increase by 1 for 
+// all remaining nodes i.e n-#adj subtree nodes
+// You can also think of it as dp where you are passing parent value to the child.
+// O(n) since O(E)=O(V)=O(n)
+vector<int> sumOfDistancesInTree(int n, vector<vector<int>>& edges) {
+    vector<int> adj[n], result(n, 0);
+    for(auto &v:edges){
+        adj[v[0]].push_back(v[1]);            
+        adj[v[1]].push_back(v[0]); 
+    }
+
+    int numNodes[n];
+    fill(numNodes, numNodes+n, 0);
+    dfs1(adj, 0, result, numNodes);
+    dfs2(adj, 0, -1, result, numNodes);
+    return result;
+}
+
+
+// 23/12/2022 LC309: Best time to buy and sell stock with cooldown
+// O(N^2)xO(N) => Alt: O(N)xO(N) optimization 
+int maxProfit_naiveDP(vector<int>& prices) {
+    int n = prices.size();
+    int maxProfit[n];
+    fill(maxProfit, maxProfit+n, 0);
+
+    for(int i=n-2;i>=0;i--){
+
+        // profit you can generate for buying on day i is prices[j]-prices[i]+maxProfit[j+2] 
+        // max profit for buying on day i is obtained by iterating j from i+1 to n.
+        // But (prices[j]+maxProfit[j+2]) - prices[i] in equation only first part only changes 
+        // in that iteration keep that maxValue stored. Refer next sol.
+        for(int j=i+1;j<n;j++){
+            if(prices[j]>prices[i]){
+                int curProfit = prices[j]-prices[i];
+                curProfit += j+2<n?maxProfit[j+2]:0;
+                maxProfit[i] = max(maxProfit[i], curProfit);
+            }
+        }
+        maxProfit[i] = max(maxProfit[i], maxProfit[i+1]);
+    }
+    
+    return maxProfit[0];
+}
+
+
+// 23/12/2022 LC309: Best time to buy and sell stock with cooldown
+// O(N)xO(N) -> Alt: O(N)xO(1) => you only need maxProfit[i+1], maxProfit[i+2]
+int maxProfit_DP(vector<int>& prices) {
+    int n = prices.size();
+    int maxProfit[n], maxSell;
+    maxProfit[n-1]=0;
+
+    // Selling on last day you get a sale price of prices[n-1] + 0 accumulated profit
+    maxSell = prices[n-1];
+
+    // Max sell indicates the day where you could sell to get the max sale price + acccumulated profit you could get if you buy on ith day.
+    // have bought on ith day.
+    for(int i=n-2;i>=0;i--){
+        // Either you don't buy on ith day & get maxProfit[i+1] Or
+        // You buy on ith day and sell it on the best day to get max profit
+        maxProfit[i] = max(maxProfit[i+1], maxSell-prices[i]);
+
+        // Selling on day i you get a sale price of prices[i] + accumulated profit of maxProfit[i+2]
+        maxSell = max(maxSell, prices[i] + (i+2<n?maxProfit[i+2]:0));
+    }
+    return maxProfit[0];
+}
+
+
+// 23/12/2022 LC309: Best time to buy and sell stock with cooldown
+
+/* 
+    CONCEPT: State transition based DP. Identify variables to reprsent states and deduce equations for transitions
+
+         _______
+        |       |
+        |----->BUY <-----COOLDOWN
+                \         ^
+                 \       /
+                  v     /
+                    SELL
+                   ^    |
+                   |____|
+
+
+ */
+
+// O(N)xO(N) Alt:O(N)xO(1) as # of states are finite you can only store the last useful value of a state
+int maxProfit(vector<int> &prices){
+
+    int n = prices.size();
+    
+    // Each of the values represent maxProfit that can be reached for i in the given state.
+    int buy[n]; // In can buy state
+    int sell[n]; // In can sell state i.e you just reached here after buy
+    int cooldown[n];  // In cool down state i.e just reached here after sell.
+    buy[0]=0; // You are in buy state => you don't have any stock.
+    cooldown[0]=0; // You won't be here in the state just take some small value INT_MIN also works
+    sell[0]=-prices[0]; //You reached here after buying prices[0] i.e a profit of -prices[0]
+
+    for(int i=1;i<n;i++){
+        buy[i] = max(buy[i-1], cooldown[i-1]);
+        sell[i] = max(sell[i-1], buy[i-1]-prices[i]);
+        cooldown[i] = sell[i-1]+prices[i];
+    }
+
+    // You won't get profit when you are already bought but didn't sell yet
+    // You can rather stay in buy state without buying than come to sell state.
+    return max(cooldown[n-1], buy[n-1]); 
+}
+
+
 int main(int argc, char const *argv[])
 {
     //cout << closeStrings("cabbba", "abbccc")<<endl;   
@@ -488,6 +763,12 @@ int main(int argc, char const *argv[])
     // int m, n;
     // cin >> m >> n;
     // cout <<uniquePaths(m, n)<<endl;
-    cout << longestCommonSubsequence_r("abcde", "ace")<< endl;
+    // cout << longestCommonSubsequence_r("abcde", "ace")<< endl;
+    // vector<vector<int>> edges = {{0,1},{0,2},{2,3},{2,4},{2,5}};
+    // printContainer(sumOfDistancesInTree(6, edges));
+
+    vector<int> prices = {1,2,3,0,2};
+    cout << maxProfit(prices);
+
     return 0;
 }
