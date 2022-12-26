@@ -132,6 +132,32 @@ void printPrimes(int n){
     cout << endl;
 }
 
+
+// 26/12/2022 Binary Exponentiation
+// finds a^n % m using binpow where n is positive
+// O(logn)
+int binpow(int a, int n, int m = 1e9+7){
+    long long result = 1;
+    long long count=a;
+    count%=m;
+    while(n>=1){
+        if(n&1) result = (result*count)%m;
+        n>>=1;
+        count  = (count*count)%m;
+    }
+
+    return result;
+}
+
+
+// 26/12/2022 Modular Multiplicative Inverse i.e a^-1 mod m
+// Given m is prime Or else complicated formula but still MMI exists only when gcd(a,m)=1 i.e co-prime
+// By fermat's little theorem it is equal to a^m-2 mod m
+int modMulInv(int a, int m=1e9+7){
+    return binpow(a, m-2, m);
+}
+
+
 int main(int argc, char const *argv[])
 {
     int n;

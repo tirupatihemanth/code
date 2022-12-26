@@ -28,18 +28,21 @@ src: https://leetcode.com/problems/container-with-most-water/solutions/6099/yet-
 // 05/12/2022 LC125-Easy: Valid Palindrome
 // O(n) x O(1): using two pointers. O(n) space if creating new string by removing alphanumeric chars
 // and then using reverse and checking equal.
+// isalnum, isalpha, isdigit all returns 0 if not non-zero int if it is true.
 bool isPalindrome(string s) {
     int i=0, j=s.length()-1;
     while(i<j){
         while(i<j && !isalnum(s[i])) i++;
         while(j>i && !isalnum(s[j])) j--;
-        if(tolower(s[i])!=tolower(s[j])) return false;
+        if(tolower(s[i])!=tolower(s[j])) return false; //tolower(c) unchanged c if c isn't alphabet
         i++; j--;
     }
     return true;
 }
 
+
 // 05/12/2022 LC167-Medium: Two Sum II - Input Array is sorted
+// Two pointers is an awesome way to eliminate unnecessary calculations similar to binary search.
 // O(n)xO(1) using two pointers.
 vector<int> twoSum(vector<int>& numbers, int target) {
     int i=0, j=numbers.size()-1;
@@ -72,6 +75,7 @@ vector<vector<int>> threeSum(vector<int>& nums) {
             if(nums[i]+nums[j]==target){
                 result.push_back({nums[i], nums[j], nums[k]});
                 i++;
+                // Since there can be multiple vals say a, b such that a+b=target.
                 while(i<j && nums[i]==nums[i-1])i++;
             }
             else if(nums[i]+nums[j]<target)i++;

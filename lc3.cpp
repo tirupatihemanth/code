@@ -38,9 +38,9 @@ vector<vector<string>> groupAnagrams(vector<string>& strs) {
 }
 
 // 05/12/2022 LC347-Medium: Top K Frequent Elements
-//O(n)xO(n). Uses hashmap for finding frequencies and then bucket sort based on frequency.
+//O(n)xO(n). Uses hashmap for finding frequencies and then bucket sort/hashing based on frequency.
 //O(nlogk)xO(n) if you use min heap based priority queue impl.
-//O(n) avg x O(n) if you use quick select based solution.
+//O(n) avg x O(n) if you use quickselect based solution.
 vector<int> topKFrequent(vector<int>& nums, int k) {
     if(!k) return {};
     unordered_map<int, int> ump;
@@ -96,7 +96,7 @@ bool isValidSudoku(vector<vector<char>>& board) {
     return true;
 }
 
-// 05/12/2022 LC271-Medium: Encode and Decode Strings; LINTCODE659;
+// 05/12/2022 LC271-Medium: Encode and Decode Strings; LNT659;
 // Both O(nl)xO(1) where n is size of strs and l is max length of a string.
 class EncodeAndDecode{
     public:

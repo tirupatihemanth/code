@@ -750,6 +750,67 @@ int maxProfit(vector<int> &prices){
 }
 
 
+// 24/12/2022 LC790-Medium: Domino and Tromino Tiling
+// O(n)xO(n) -> can optimize to O(n)xO(1) since only dependent on a few prev values.
+int numTilings(int n) {
+    int N = 1e9 + 7;
+
+    // Draw a state diagram with transition for types of dominos & trominos d1, d2, t1, t2, t3, t4
+    // s[i] indicates the number of ways to reach state s after adding i tiles.
+    int s1[n+1], s2[n+1], s3[n+1], s4[n+1];
+    s1[0]=s2[0]=s3[0]=s4[0]=0; // when no tile is added 0 ways to reach that tile.
+    s1[1]=s2[1]=s3[1]=s4[1]=1; // Ways to reach state s after adding 1 tile is 1 in each case.
+
+    // You can substitue s2, s3, s4 recursive equations into s1 to simplify it further to
+    // s1[i] = 2*s1[i-1]+s1[i-3]; change based cases to s1[1]=1;s1[2]=2;s1[3]=5; and start iteration from n=4
+    // You are substituting in s1 because your result will be in s1 i.e s1[n] i.e trying to remove other states.
+    for(int i=2;i<=n;i++){
+
+        // You can fill ith tile in s1 either from s1[i-1] by adding just d1 or s2[i-1] by adding d2
+        // or from s3[i-2] by adding t4 or from s4[i-2] by adding t3.
+        // If you add t4 to s3[i-1] you will get i+1 tiles not i tiles. Hence you can reach i tiles filled i.e
+        // s1[i] from s3[i-2] and adding a t4 to it. s3[i-2] you would'v just reached from s1[i-3]+t3 for understanding
+        s1[i] = ((s1[i-1]+s2[i-1])%N+(s3[i-2]+s4[i-2])%N)%N;
+        s2[i] = s1[i-1];
+
+        // You can reach s3 on adding ith tile either from adding 1 t3 tile from s1[i-1] or d2 tile from s4[i-1]
+        s3[i] = (s1[i-1]+s4[i-1])%N;
+        s4[i] = (s1[i-1]+s3[i-1])%N;
+    }
+
+    // You will completely fill the given 2xn tile board only in s1 state in other cases there is empty slot.
+    return s1[n];
+}
+
+
+// 25/12/2022 LC2389: Longest Subsequence with limited sum
+// Remember subsequence needn't be contiguous. It isn't subarray.
+// O(nlogn)xO(n) => since modifying input array space complexity is O(n)
+vector<int> answerQueries(vector<int>& nums, vector<int>& queries) {
+    vector<int> result(queries.size());
+    sort(nums.begin(), nums.end());
+    partial_sum(nums.begin(), nums.end(), nums.begin());
+
+    for(int i=0;i<queries.size();i++){
+        result[i] = upper_bound(nums.begin(), nums.end(), queries[i]) - nums.begin();
+    }
+
+    return result;
+}
+
+
+// 26/12/2022 LC55-Medium: Jump Game
+// O(n)xO(1)
+bool canJump(vector<int>& nums) {
+    int reach=1, i=0;
+    for(i=0;i<nums.size() && reach > 0;i++){
+        reach = max(reach-1, nums[i]);            
+    }
+
+    return i==nums.size();
+}
+
+
 int main(int argc, char const *argv[])
 {
     //cout << closeStrings("cabbba", "abbccc")<<endl;   

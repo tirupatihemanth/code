@@ -14,6 +14,8 @@ Sliding window also uses two pointers. Can look at it multiple ways
 // 07/12/2022 LC121-Easy: Best time to buy and sell stock
 // O(n) x O(1); Always has the smallest price we've seen so far on left pointer. It may not always yield
 // biggest profit as highs after the lowest left might not be that large, but we'd max(profit) anyways.
+// Alt: DP. Keep maxPrice seen so far as you iterate from the right. O(n)xO(1). This is also sliding a windows
+// where you keep max value always as your right pointer.
 int maxProfit(vector<int>& prices) {
     int l=0, r=1, profit=0;
 
@@ -43,8 +45,9 @@ int lengthOfLongestSubstring(string s) {
     return max_lls;
 }
 
+
 // 07/12/2022 LC424-Medium: Longest Repeating Character Replacement.
-// Alternate solution to the below soln. More easy to understand.
+// Alternate solution to the below soln. This is more easy to understand.
 // Whenever your total variable are limited like alphabets i.e 26 think in this way.
 // O(26n)xO(1) soln
 int characterReplacement_alt(string s, int k) {
@@ -77,14 +80,17 @@ int characterReplacement(string s, int k){
         freq[s[r]]++;
 
         // unless r-l+1 increase anyway our max_length won't change so when we decrement freq if 
-        // we simulatenously don't reduce if needed the maxfreq it won't cause any issues.
+        // we simulatenously don't reduce the maxfreq it won't cause any issue.
         max_freq = max(max_freq, freq[s[r]]);
 
         //O(26) operation
         //int max_freq = accumulate(freq.begin(), freq.end(), max_freq, [](int x, auto y){return max(x,y.second);});
         
-        //'if' also works instead of while
-        while((r-l+1)-max_freq>k){
+        // Since it isn't possible to have a required windows starting from l we shift it by 1.
+        // Our window never shrinks and maintains max_length since anyway we need the maximum.
+        // It only expands when more #of max_freq characters comes into our windows until then we keep shifting it
+        // You can use while/if it doesn't matter. We are using if to be consistent that window doesn't shrink.
+        if((r-l+1)-max_freq>k){
             freq[s[l]]--;
             l++;
         }
@@ -93,6 +99,7 @@ int characterReplacement(string s, int k){
 
     return max_length;
 }
+
 
 // 07/12/2022 LC567-Medium: Permutation in a string
 // O(n)xO(1) my soln. we insert and remove each element of the string s2 atmost once each so O(n)
@@ -127,14 +134,14 @@ bool checkInclusion_alt(string s1, string s2) {
 // -------
 // O(26n)xO(1) take s1 sized windows in s2 and compare their hashmaps
 // and continue doing that as you slide window i.e l++ & r++ if matches == 26 return true.
-// O(n)xO(1) eliminates comparing entire hashmaps of 26 alphabets for every windows by 
 // --------
+// O(n)xO(1) eliminates comparing entire hashmaps of 26 alphabets for every windows by 
 // keeping track of no. of matches for current window and upating no. of matches based on 
 // including and excluding elements.
 bool checkInclusion(string s1, string s2){
     if(s1.length()>s2.length()) return false;
-    int mp1[26] = {0};
-    int mp2[26] = {0};
+    int mp1[26] = {};
+    int mp2[26] = {};
     for(int i=0;i<s1.length();i++){
         mp1[s1[i]-'a']++;
         mp2[s2[i]-'a']++;

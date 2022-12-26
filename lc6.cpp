@@ -65,6 +65,7 @@ public:
 
 // 13/12/2022 LC155-Medium: Min Stack
 // O(1) overall extra space & O(1)xO(1) for all ops.
+// Here instead of storing elements we are storing cur_value-min_value.
 // Alt: push 2val-min whenever new push val <=min else just push val. if pop val<=min then update min to 2min-val.
 class MinStack_alt {
     stack<long> sk;
@@ -105,7 +106,7 @@ public:
 
 
 // 13/12/2022 LC150-Medium: Evaluate Reverse Polish Notation aka postfix evaluation
-// We use stack because each encounter of an operator requires most recent two values to operate. Similar
+// We use operand stack because each encounter of an operator requires most recent two values to operate. Similar
 // to that of valid paranthesis where you only need most recent value.
 // O(n)xO(n)
 int evalRPN(vector<string>& tokens) {
@@ -185,7 +186,8 @@ vector<string> generateParenthesis(int n){
 
 
 // 14/12/2022 LC739-Medium: Daily Temperatures
-// Equivalent to finding next Greater Element. Alt: You can do it from left to right also.
+// Equivalent to finding next Greater Element. You have Monotonic decreasing stack.
+// Alt: You can do it from left to right also.
 // Naive: O(n^2)xO(1)
 // O(n)xO(n)
 vector<int> dailyTemperatures(vector<int>& temperatures) {
@@ -215,6 +217,8 @@ int carFleet(int target, vector<int>& position, vector<int>& speed) {
         mp[i].first = position[i];
         mp[i].second = speed[i];
     }
+
+    // transform(position.begin(), position.end(), speed.begin(), mp.begin(), [](int x, int y)->pair<int, int>{return {x, y};});
 
     sort(mp.begin(), mp.end());
     stack<float> sk;         

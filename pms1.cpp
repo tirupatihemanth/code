@@ -147,7 +147,7 @@ void kMostFrequent(vector<int> &v, int k){
     }
     cout << endl;
  */
-    //Freq indexing solution. Prints in any order if same freq
+    //Freq indexing solution. Prints in no specific order if same freq
 /*     vector<int> freqIdx[v.size()+1];
     for(auto &x:ump){
         freqIdx[x.second].push_back(x.first);
