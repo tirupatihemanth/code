@@ -34,6 +34,7 @@ ListNode* mergeNodes(ListNode* head) {
     return head;
 }
 
+
 // 02/12/2022 LC1290-Easy: Convert Binary Number in a LL to integer
 int getDecimalValue(ListNode* head) {
     int n=0;
@@ -43,6 +44,7 @@ int getDecimalValue(ListNode* head) {
     }
     return n;
 }
+
 
 // 02/12/2022 LC2130-Medium: Maximum Twin Sum of a Linked List
 // O(N)xO(1)
@@ -66,6 +68,7 @@ int pairSum(ListNode* head) {
     return max_val;
 }
 
+
 // 02/12/2022 LC2130-Medium: Maximum Twin Sum of a Linked List
 // O(N)xO(N) Recursive solution uses pointer reference
 int pairSum_r(ListNode* cur, ListNode* &start){
@@ -87,55 +90,6 @@ int pairSum_r(ListNode* head){
     return pairSum_r(head, start);
 }
 
-
-ListNode* reverseK(ListNode* cur, ListNode* end){
-    ListNode* prev = end;
-    while(cur!=end){
-        ListNode* next = cur->next;
-        cur->next = prev;
-        prev = cur;
-        cur = next;
-    }
-    return prev;
-}
-
-// 02/12/2022 LC25-Hard: Reverse Nodes in K-Group
-// O(N) x O(1)
-ListNode* reverseKGroup(ListNode* head, int k) {
-    ListNode *end = head, *start = new ListNode, *new_start=nullptr;
-    start->next = head;
-    ListNode *new_head = start;
-    int group;
-
-    while(end){
-        group = k;
-        while(end && group--){
-            end = end->next;
-        }
-
-        if(!end && group>0) break;
-        new_start = start->next;
-        start->next = reverseK(start->next, end);
-        start = new_start;
-    }
-    return new_head->next;
-}
-
-// 02/12/2022 LC25-Hard: Reverse Nodes in K-Group
-// O(N)xO(N/k) Recursive solution
-ListNode* reverseKGroup_r(ListNode* head, int k) {
-    int group = k;
-    ListNode* end = head;
-    while(end && group--){
-        end = end->next;
-    }
-
-    if(!end && group>0) return head;
-
-    ListNode* new_head = reverseK(head, end);
-    head->next = reverseKGroup(end, k);
-    return new_head;
-}
 
 // 03/12/2022 LC1472-Medium: Design Browser History
 // If you want all O(1) use vector & not care about deleting forward history.
@@ -171,6 +125,7 @@ public:
         return backSk.top();
     }
 };
+
 
 // 03/12/2022 LC2326-Medium: Spiral Matrix
 // O(N)xO(N)
@@ -262,6 +217,7 @@ ListNode* mergeSortLL(ListNode *head){
 
     return mergeLL(left, right);
 }
+
 
 // 03/12/2022 Alt
 // O(nlogn)xO(1) bottom up iterative merge sort impl

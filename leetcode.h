@@ -23,6 +23,20 @@ struct TreeNode {
     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
 };
 
+
+class Node {
+public:
+    int val;
+    Node* next;
+    Node* random;
+    Node(int _val) {
+        val = _val;
+        next = NULL;
+        random = NULL;
+    }
+};
+
+
 template<typename Container>
 void printContainer(Container c){
     for(auto &x:c){

@@ -21,50 +21,6 @@ int fib(int n) {
     return sum;
 }
 
-// 27/11/2022 LC206-Easy
-// 3 pointer iterative i.e default
-ListNode* reverseList_3P(ListNode* head) {
-    if(!head) return head;
-    ListNode *cur=head, *next=nullptr, *prev=nullptr;
-
-    while(cur){
-        next = cur->next;
-        cur->next = prev;
-        prev=cur;
-        cur=next;   
-    }
-
-    return prev;
-}
-
-// 30/11/2022 LC206-Easy
-// 2 pointer approach
-ListNode* reverseList_2p(ListNode *head){
-        ListNode *cur = head, *prev=nullptr;
-        while(cur){
-            swap(cur->next, prev);
-            swap(prev, cur);
-        }
-        return prev;
-}
-
-// 27/11/2022 LC206-Easy
-ListNode* reverseList_recur(ListNode* head, ListNode *prev=nullptr){
-    if(!head) return prev;
-    ListNode* next = head->next;
-    head->next = prev;
-    return reverseList_recur(next, head);
-}
-
-// 27/11/2022 LC206-Easy
-ListNode* reverseList_TailRecur(ListNode* head){
-    if(!head || !head->next) return head;
-    ListNode* new_head = reverseList_TailRecur(head->next);
-    head->next->next=head;
-    head->next=nullptr;
-    return new_head;
-}
-
 vector<TreeNode*> allPossibleFBT(unordered_map<int, vector<TreeNode*>> &fbts, int n) {
     if(n%2==0){
         return vector<TreeNode*>();
@@ -103,44 +59,6 @@ vector<TreeNode*> allPossibleFBT(unordered_map<int, vector<TreeNode*>> &fbts, in
 vector<TreeNode*> allPossibleFBT(int n){
     unordered_map<int, vector<TreeNode*>> fbts;
     return allPossibleFBT(fbts, n);
-}
-
-// 28/11/2022 LC21-Easy 
-//O(m+n)xO(m+n)
-ListNode* mergeTwoLists(ListNode* list1, ListNode *list2){
-    if(!list1) return list2;
-    if(!list2) return list1;
-
-    if(list1->val<list2->val){
-        list1->next = mergeTwoLists(list1->next, list2);
-        return list1;
-    }    
-    list2->next = mergeTwoLists(list1, list2->next);
-    return list2;
-
-}
-
-//Iterative with very little if-else
-//O(m+n)xO(1)
-// 28/11/2022 LC21-Easy 
-ListNode* mergeTwoLists_iter(ListNode* list1, ListNode *list2){
-    //This temp result node helps avoid lot of if(result) statements.
-    ListNode* result = new ListNode;
-    ListNode* tail = result;
-    while(list1 && list2){
-        if(list1->val<list2->val){
-            tail = tail->next = list1;
-            list1=list1->next;
-        }
-        else{
-            tail = tail->next = list2;
-            list2 = list2->next;
-        }
-    }
-
-    if(list1) tail->next = list1;
-    if(list2) tail->next = list2;
-    return result->next;
 }
 
 
@@ -391,66 +309,6 @@ string decodeString(string &s, int &i){
     }
     return res;
 }
-
-// 02/12/2022 LC143-Medium: Reorder List
-// O(N)xO(N)
-void reorderList(ListNode* head) {
-    if(!head || !head->next) return;
-    stack<ListNode*> sk;
-    ListNode *cur = head, *fast=head, *next = head->next;
-
-    //while(fast && fast->next)
-    //Gets cur to n/2+1 element if n/2 is even
-    // n/2 and n/2+1 are mids if n is even.
-    // n/2+1 is mid if n is odd.
-    
-    //fast->next && fast->next->next
-    // Gets cur to n/2 if n is even. ceil(n/2) i.e n/2+1 if n is odd.
-    while(fast->next && fast->next->next){
-        cur=cur->next;
-        fast = fast->next->next;
-    }
-
-    while(cur->next){
-        sk.push(cur->next);
-        cur = cur->next;
-    }
-
-    cur=head;
-    while(!sk.empty()){
-        cur->next = sk.top();
-        sk.top()->next = next;
-        sk.pop();
-        cur=next;
-        next=next->next;
-    }
-    cur->next=nullptr;
-}
-
-ListNode* reorderList(ListNode* cur, ListNode* head){
-    ListNode* curHead;
-    if(cur) curHead = reorderList(cur->next, head);
-    else return head;
-    if(curHead){
-        if(curHead==cur || curHead->next==cur) return cur->next = nullptr;
-        ListNode *next = curHead->next;
-        curHead->next = cur;
-        cur->next = next;
-        return next;
-    }
-    return curHead;
-}
-
-// 13/12/2022 LC143-Medium: Reorder List
-// Alt: O(n)xO(1) No stack approach is to reverse second half and merge these two lists alternatively.
-// Recursive - keep forward head as param and reorder once you hit bottom of dfs.
-// O(n)xO(n) b/o stackspace during dfs.
-ListNode* reorderList_r(ListNode* head){
-    reorderList(head, head);
-    return head;
-}
-
-
 
 int main(int argc, char const *argv[])
 {

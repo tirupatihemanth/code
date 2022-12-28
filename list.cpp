@@ -373,28 +373,6 @@ Node* remove_duplicates_recursive(Node* head){
     }
 }
 
-bool loop_detection(Node* head){
-    
-    // O(n)xO(n) solution
-    /* unordered_set<Node*> set;
-    while(head){
-        if(!set.emplace(head).second){
-            return true;
-        }
-        head = head->next;
-    }
-    return false; */
-
-    // O(n) x O(1). Floyd's cycle detection.
-    Node *slow = head, *fast = head;
-
-    while(fast && fast->next){
-        slow = slow->next;
-        fast = fast->next->next;
-        if(slow==fast)return true;
-    }
-    return false;
-}
 
 //kth pos from last is n-k+1th pos from 1st.
 //if you do n ->next ops you will be in n+1 pos

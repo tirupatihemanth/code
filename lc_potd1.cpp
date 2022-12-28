@@ -811,6 +811,38 @@ bool canJump(vector<int>& nums) {
 }
 
 
+// 27/12/2022 LC2279-Medium: Maximum bags with full capacity of rocks
+// O(nlogn)xO(n). Greedy approach.
+int maximumBags(vector<int>& capacity, vector<int>& rocks, int additionalRocks) {
+    
+    for(int i=0;i<capacity.size();i++){
+        capacity[i]-=rocks[i];
+    }
+
+    sort(capacity.begin(), capacity.end());
+
+    int result=0;
+    for(int i=0;i<capacity.size() && capacity[i]-additionalRocks<=0;i++){
+        additionalRocks-=capacity[i];
+        result+=1;
+    }
+    return result;
+}
+
+
+// 28/12/2022 LC1962-Medium: Remove stones to minimize the total
+// O(n+klogn)xO(n)
+int minStoneSum(vector<int>& piles, int k) {
+    make_heap(begin(piles), end(piles));
+    while(k-->0){
+        pop_heap(begin(piles), end(piles));
+        piles.back()-=piles.back()/2;
+        push_heap(begin(piles), end(piles));
+    }
+    return accumulate(begin(piles), end(piles), 0);
+}
+
+
 int main(int argc, char const *argv[])
 {
     //cout << closeStrings("cabbba", "abbccc")<<endl;   
