@@ -370,47 +370,6 @@ int max(Node* root){
     return std::max({max(root->left), max(root->right), root->data});
 }
 
-bool find_path(Node* root, int data, vector<int>& path){
-    if(!root) return false;
-    path.push_back(root->data);
-    if(root->data==data) return true;
-    if(!find_path(root->left, data, path) && !find_path(root->right, data, path)){
-        path.pop_back();
-        return false;
-    }
-    else return true;
-}
-
-// O(n)xO(n). Multiple traversals
-int lca(Node* root, int data1, int data2){
-    if(!root) return INT_MAX;
-    vector<int> path1, path2;
-    find_path(root, data1, path1);
-    find_path(root, data2, path2);
-
-    int lca=-1;
-    f(i,min(path1.size(), path2.size())){
-        if(path1[i]==path2[i]){
-            lca=i;
-        }
-        else break;
-    }
-    if(lca==-1) return -1;
-    return path1[lca];
-}
-
-// Assume both data1, data2 are in the tree. If only one is there then you get that value
-// O(n)xO(n). More precisely O(n) x theta(h) Single traversal. No need to store path arrays.
-int lca2(Node* root, int data1, int data2){
-    if(!root) return -1;
-    if(root->data==data1 || root->data == data2) return root->data;
-    int left = lca2(root->left, data1, data2);
-    int right = lca2(root->right, data1, data2);
-    
-    if(left>=0 && right>=0) return root->data;
-    else if(left < 0) return right;
-    else return left;
-}
 
 // O(N^2) - since diameter = left + right heights + 1 Hence height (which is O(N)) is 
 // calculated for each node. Diameter Aka width of a tree. 
@@ -488,7 +447,7 @@ int main(int argc, char const *argv[])
 
     cout << max(root)<<endl;
 
-    cout << lca2(root, 30, 40)<<endl;
+    // cout << lca2(root, 30, 40)<<endl;
 
     cout << diameter(root)<<endl;
 

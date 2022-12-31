@@ -193,15 +193,13 @@ int maxProduct(TreeNode* root) {
 // at all since we are returning maximum sum of vals from given node to the leaves) but
 // it solves the problem of maxPathSum as negative height will only reduce maxPathSum through
 // current rootnode.
-int maxHeight(TreeNode* root, int &maxPathSum){
+int dfs_maxPathSum(TreeNode* root, int &result){
     if(!root) return 0;
-    int leftHeight = maxHeight(root->left, maxPathSum);
-    int rightHeight = maxHeight(root->right, maxPathSum);
-    int maxHeight = max(leftHeight, rightHeight);
+    int left = dfs_maxPathSum(root->left, result);
+    int right = dfs_maxPathSum(root->right, result);
+    result = max(left+right+root->val, result);
     
-    maxPathSum = max(maxPathSum, root->val+leftHeight+rightHeight);
-
-    return root->val+maxHeight>0?root->val+maxHeight:0;
+    return max(root->val+max(left, right), 0);
 }
 
 // 11/12/2022 LC124-Hard: Binary Tree Maximum Path Sum
@@ -209,7 +207,7 @@ int maxHeight(TreeNode* root, int &maxPathSum){
 // found in left subtree or a path already found in right subtree. i.e doing a post order dfs traversal.
 int maxPathSum(TreeNode* root) {
     int maxPathSum = INT_MIN;
-    maxHeight(root, maxPathSum);
+    dfs_maxPathSum(root, maxPathSum);
     return maxPathSum == INT_MIN?0:maxPathSum;
 }
 
@@ -843,12 +841,119 @@ int minStoneSum(vector<int>& piles, int k) {
 }
 
 
+// 29/12/2022 LC1834-Medium: Single-Threaded CPU
+// O(NlogN)xO(N)
+vector<int> getOrder(vector<vector<int>>& tasks) {
+    int n = tasks.size();
+    vector<int> result, idx(n);
+    result.reserve(n);
+    
+    // No input array modification
+    iota(idx.begin(), idx.end(), 0);
+    
+    sort(idx.begin(), idx.end(), [&](int x, int y){ return tasks[x][0] < tasks[y][0]; });
+    
+    auto cmp = [&tasks](int x, int y){ 
+        return tasks[x][1]==tasks[y][1]?x>y:tasks[x][1]>tasks[y][1]; 
+    };
+
+    priority_queue<int, vector<int>, decltype(cmp)> pq(cmp);
+
+    long long curTime=tasks[idx[0]][0];
+    int i=0;
+
+    while(i<n || !pq.empty()) {
+        
+        if(pq.empty() && curTime<tasks[idx[i]][0]){
+            curTime = tasks[idx[i]][0];
+        }
+        
+        while(i < n && tasks[idx[i]][0]<=curTime){
+            pq.push(idx[i]);
+            i++;
+        }
+        
+        result.push_back(pq.top());
+        curTime+=tasks[pq.top()][1];
+        pq.pop();
+    };
+    return result;
+}
+
+
+void dfs_allPaths(vector<vector<int>>& graph, int s, int d, vector<int> &recSk, vector<vector<int>> &result){
+    recSk.push_back(s);
+    if(s==d) result.push_back(recSk);
+
+    for(int v:graph[s]){
+        dfs_allPaths(graph, v, d, recSk, result);
+    }
+
+    recSk.pop_back();
+}
+
+
+// 30/12/2022 LC797: All Paths from source to target
+// See how easy it is to think path problems with dfs instead of bfs
+// O(n*2^n)xO(n). O(n) space since return value is not counted in space complexity. Only recSk is counted.
+// Let every node i is connected j if i<j. For a path of lenth k b/w 0 & n-1 we have k-1 nodes
+// in between which can be chosen from n-2 nodes. i.e n-2Ck-1. Now k=1 to n-2 i.e summation => 2^n-2 paths.
+// And each path length is O(n) => O(n*2^n) time. Why not permutation? Because it's directed & acyclic.
+// O(n*2^n) nodes in all paths is the size of result. why? basically 2^n-2 is #of subsets. Each subset
+// and it's complement has n-2 nodes combined.
+vector<vector<int>> allPathsSourceTarget(vector<vector<int>>& graph) {
+    vector<vector<int>> result;
+    vector<int> recSk;
+
+    dfs_allPaths(graph, 0, graph.size()-1, recSk, result);
+    return result;
+}
+
+
+int uniquePathsIII(vector<vector<int>>& grid, int i, int j, int empty){
+    if(i<0 || i>=grid.size() || j<0 || j>=grid[0].size()) return 0;
+    if(grid[i][j]==2 && empty==0) return 1;
+    if(grid[i][j]!=0) return 0;
+    grid[i][j]=-1;
+    empty--;
+    int result = uniquePathsIII(grid, i+1, j, empty) +
+                    uniquePathsIII(grid, i-1, j, empty) +
+                    uniquePathsIII(grid, i, j+1, empty) +
+                    uniquePathsIII(grid, i, j-1, empty);
+    grid[i][j]=0;
+    empty++;
+    return result;
+}
+
+
+// 31/12/2022 LC980-Hard: Unique Paths III
+// O(3^N)xO(N): Each node (except for start) will have three possibilities, O(N) for DFS stack. 
+// Where N is # empty cells i.e 0s.
+int uniquePathsIII(vector<vector<int>>& grid) {
+    int empty=0, start_i=0, start_j=0;
+    for(int i=0;i<grid.size();i++){
+        for(int j=0;j<grid[0].size();j++){
+            if(grid[i][j]==1){
+                start_i=i;
+                start_j=j;
+                grid[i][j]=0;
+            }
+            // increment for grid[i][j]=0;
+            if(grid[i][j]==0) empty++;
+        }
+    }
+
+    // you can reset grid[start_i][start_j]=1 if you don't want to keep input intact after this.
+    return uniquePathsIII(grid, start_i, start_j, empty);
+}
+
+
 int main(int argc, char const *argv[])
 {
     //cout << closeStrings("cabbba", "abbccc")<<endl;   
     
     vector<int> v = {10,5,15,3,7,18};
-    TreeNode* root = makeBST(v);
+    // TreeNode* root = makeBST(v);
     // cout << rangeSumBST(root, 7, 15) << endl;
     // cout << maxAncestorDiff(root)<<endl;
     // cout << minimumAverageDifference(v)<<endl;
@@ -861,7 +966,12 @@ int main(int argc, char const *argv[])
     // printContainer(sumOfDistancesInTree(6, edges));
 
     vector<int> prices = {1,2,3,0,2};
-    cout << maxProfit(prices);
+    // cout << maxProfit(prices);
 
+    // vector<vector<int>> tasks = {{19,13},{16,9},{21,10},{32,25},{37,4},{49,24},{2,15},{38,41},{37,34},{33,6},{45,4},{18,18},{46,39},{12,24}};
+    // printContainer(getOrder(tasks));
+
+    vector<vector<int>> grid = {{1,0,0,0},{0,0,0,0},{0,0,2,-1}};
+    cout << uniquePathsIII(grid) << endl;
     return 0;
 }
