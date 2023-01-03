@@ -195,6 +195,7 @@ bool findPath(TreeNode* root, TreeNode *node, vector<TreeNode*> &path){
 
 
 // 29/12/2022 LCA in any binary tree.
+// !NEETCODE !LEETCODE
 // O(n)xO(n) 2 traversals. Requires storing path also
 TreeNode* lowestCommonAncestor_alt(TreeNode* root, TreeNode* p, TreeNode* q) {
     vector<TreeNode*> path1, path2;
@@ -211,8 +212,9 @@ TreeNode* lowestCommonAncestor_alt(TreeNode* root, TreeNode* p, TreeNode* q) {
 
 
 // 29/12/2022 LCA in any binary tree.
+// !NEETCODE !LEETCODE
 // Used when the p, q are guaranteed to be in the tree.
-// O(n)xO(n). 1 traversal. No need to store find the paths.
+// O(n)xO(n). 1 traversal. No need to store/find the actual paths from roots.
 TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
     if(!root) return nullptr;
     if(root == p || root == q) return root;

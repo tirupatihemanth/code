@@ -3,7 +3,7 @@
 
 using namespace std;
 
-// Leetcode POTD December
+/* LEETCODE POTD DECEMBER */
 
 
 // 02/12/2022 LC1657-Medium
