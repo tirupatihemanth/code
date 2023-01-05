@@ -61,7 +61,7 @@ void stringPermutations(string s){
 
 // 14/12/2022 Not distinct
 // backtracking: recursion whether each element is included or not.
-// O(nx2^n)xO(n) stack space. 2^n subsets each printing/storing is O(n).
+// O(nx2^n)xO(n) stack space. 2^n subsets each printing/storing/building is O(n).
 void powerset(string &s, int idx, string &cur){
 
     if(idx == s.length()){
