@@ -45,6 +45,18 @@ void printContainer(Container c){
     cout << endl;
 }
 
+
+template<typename T>
+void printMatrix(vector<vector<T>> &mat){
+    for(auto &r:mat){
+        for(auto &elem:r){
+            cout << elem << " ";
+        }
+        cout << endl;
+    }
+}
+
+
 ListNode* reverseList(ListNode* head) {
     if(!head) return head;
     ListNode *cur=head, *next=nullptr, *prev=nullptr;

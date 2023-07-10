@@ -294,6 +294,7 @@ void merge_sort_i(vector<int> &v){
     }
 }
 
+// When all elements are equal issue of O(n^2). Use hoare in those situations or two pivots <, =, >.
 int partition(vector<int>& v, int start, int end){
     int pivot = v[end];
 
@@ -309,6 +310,7 @@ int partition(vector<int>& v, int start, int end){
     return j+1;
 }
 
+// There is no fixing of pivots in hoare just items on left <= items on right. The actual pivot could be anywhere.
 int partition_hoare(vector<int>& v, int start, int end){
     int pivot = v[start];
     int i=start, j=end;
