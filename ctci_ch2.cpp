@@ -1,10 +1,9 @@
-#include <bits/stdc++.h>
 #include "leetcode.h"
 
 using namespace std;
 
 
-/*  CTCI CH1 - Linked Lists */
+/*  CTCI CH2 - Linked Lists */
 
 
 // 21/06/2023 2.1: Remove Dups

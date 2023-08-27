@@ -1,4 +1,4 @@
-#include<bits/stdc++.h>
+#include "leetcode.h"
 using namespace std;
 
 /* BINARY SEARCH */

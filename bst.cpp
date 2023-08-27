@@ -1,4 +1,4 @@
-#include <bits/stdc++.h>
+#include "leetcode.h"
 #define f(i,n) for(int i=0;i<n;i++)
 
 using namespace std;
@@ -26,7 +26,7 @@ class minheap{
 
     //O(n)xO(1) function. Not O(nlogn) do maths/watch gfg video
     void buildHeap(){
-        for(int i=(size-2)/2;i>=0;i--){
+        for(int i=(size-2)/2;i>=0;i--){//starting from parent of last element i.e parent(size-1)
             heapify(i);
         }
     }

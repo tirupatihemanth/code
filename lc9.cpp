@@ -1,4 +1,3 @@
-#include<bits/stdc++.h>
 #include "leetcode.h"
 using namespace std;
 
@@ -18,7 +17,7 @@ TreeNode* invertTree(TreeNode* root) {
 
 // 29/12/2022 LC226-Easy: Invert Binary Tree
 // Preorder traversal (if we push right first though)
-// O(n)xO(n) but uses stack data structure (heap memory) instead of application call stack which could overflow easily
+// O(n)xO(n). Uses stack data structure (heap memory) instead of application call stack which could overflow easily
 TreeNode* invertTree_dfs_i(TreeNode* root) {
     if(!root) return root;
     stack<TreeNode*> sk;
@@ -211,7 +210,7 @@ TreeNode* lowestCommonAncestor_alt(TreeNode* root, TreeNode* p, TreeNode* q) {
 }
 
 
-// 29/12/2022 LCA in any binary tree.
+// 29/12/2022 LC236-Medium: LCA of a binary tree.
 // !NEETCODE !LEETCODE
 // Used when the p, q are guaranteed to be in the tree.
 // O(n)xO(n). 1 traversal. No need to store/find the actual paths from roots.
@@ -222,10 +221,36 @@ TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
     auto left = lowestCommonAncestor(root->left, p, q);
     auto right = lowestCommonAncestor(root->right, p, q);
     if(left && right) return root;
-    if(!left) return right;
-    else return left;
+    if(left) return left;
+    return right;
 }
 
+
+TreeNode* dfs_LCAII(TreeNode* root, TreeNode* p, TreeNode* q, int &count) {
+    if(!root) return nullptr;
+    
+    auto left = dfs_LCAII(root->left, p, q, count);
+    auto right = dfs_LCAII(root->right, p, q, count);
+
+    if(left && right) return root;
+    if(root==p || root==q) {
+        count++;
+        return root;
+    }
+    if(left) return left;
+    return right;
+}
+
+// 18/07/2023 LC1644-Medium: lCA of a binary tree II
+// p,q are not guaranteed to be in the tree. Return nullptr if either is not present.
+// Alt: You can iterate first to check if both are present then do usual LCA approach.
+TreeNode* lowestCommonAncestorII(TreeNode* root, TreeNode* p, TreeNode* q, int &count) {
+    if(!root) return nullptr;
+    int count=0;
+    auto result = dfs_LCAII(root, p, q, count);
+    return count==2?result:nullptr;
+
+}
 
 // 29/12/2022 LC102-Medium: Binary Tree Level Order Traversal
 // O(n)xO(n) Uses move semantics to avoid copy into a vector.
@@ -297,7 +322,7 @@ void dfs_rightSideView(TreeNode *root, int depth, vector<int> &result){
 }
 
 // 30/12/2022 LC199-Medium: Binary Tree Right Side View
-// O(n)xO(n)
+// O(n)xO(n). For a given depth first node discovered is the right most in this dfs.
 vector<int> rightSideView_dfs(TreeNode* root) {
     if(!root) return vector<int>();
     vector<int> result;

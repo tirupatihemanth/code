@@ -1,5 +1,8 @@
 # ignore executibles
 *.exe
+*.out
 *.txt
 .vscode/
 scratch*
+*.dSYM/
+.DS_Store

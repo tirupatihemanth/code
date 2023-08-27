@@ -1,5 +1,4 @@
-#include<bits/stdc++.h>
-#include "leetcode.h"
+#include "list.cpp"
 using namespace std;
 
 /* LINKED LIST */
@@ -237,6 +236,7 @@ ListNode* removeNthFromEnd(ListNode* head, int n) {
 
 // 27/12/2022 LC138-Medium: Copy list with random pointer
 // O(n)xO(n)
+/*
 Node* copyRandomList(Node* head) {
     unordered_map<Node*, Node*> mp = {{nullptr, nullptr}};
     auto cur = head;
@@ -254,6 +254,7 @@ Node* copyRandomList(Node* head) {
 
     return mp[head];
 }
+*/
 
 
 // 27/12/2022 LC2-Medium: Add Two Numbers

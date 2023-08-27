@@ -1,4 +1,4 @@
-#include<bits/stdc++.h>
+#include "leetcode.h"
 using namespace std;
 
 
@@ -124,6 +124,37 @@ void dfs_permute(vector<int>& nums, int idx, vector<vector<int>> &result){
 vector<vector<int>> permute(vector<int>& nums) {
     vector<vector<int>> result;
     dfs_permute(nums, 0, result);
+    return result;
+}
+
+
+void dfs_permuteUnique(unordered_map<int, int> &ump, int size, vector<int> &perm, vector<vector<int>> &result){
+
+    if(perm.size()== size) {
+        result.push_back(perm);
+        return;
+    }
+
+    for(auto &[n, count]: ump){
+        if(count<=0)continue;
+        perm.push_back(n);
+        count--;
+        dfs_permuteUnique(ump, size, perm, result);
+        perm.pop_back();
+        count++;
+    }
+
+}
+
+// lC47-Medium: Permutations II - nums can contain duplicates. Return unique permutations.
+vector<vector<int>> permuteUnique(vector<int>& nums) {
+    unordered_map<int, int> ump;
+    for(int num:nums) ump[num]++;
+
+    vector<int> perm;
+    vector<vector<int>> result;
+
+    dfs_permuteUnique(ump, nums.size(), perm, result);
     return result;
 }
 

@@ -1,4 +1,4 @@
-#include <bits/stdc++.h>
+#include "leetcode.h"
 using namespace std;
 
 /* Arrays & Hashing. */
@@ -147,6 +147,11 @@ int longestConsecutive(vector<int>& nums) {
 
     return max_length;
 }
+
+
+/* NEETCODE ALL PROBLEMS BEGIN */
+
+
 
 int main(int argc, char const *argv[])
 {

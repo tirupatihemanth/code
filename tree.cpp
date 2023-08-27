@@ -1,5 +1,4 @@
-#include<bits/stdc++.h>
-#define f(i,n) for(int i=0; i<n; i++)
+#include "leetcode.h"
 
 using namespace std;
 
@@ -107,10 +106,30 @@ void postorder(Node* root){
 }
 
 
-// TODO
-void postorder_iter(Node* root){
+vector<int> postorderTraversal_iter(TreeNode* root) {
+    if(!root) return {};
+    vector<int> pot;
 
+    stack<TreeNode*> sk;
+    TreeNode* cur=root;
+    while(cur || sk.size()){
+        if(cur){
+            sk.push(cur);
+            sk.push(cur);
+            cur = cur->left;
+            continue;
+        }
+
+        auto node = sk.top();
+        sk.pop();
+        if(sk.size() && sk.top()==node){
+            cur = node->right;
+        }
+        else pot.push_back(node->val);
+    }
+    return pot;
 }
+
 
 
 // O(n)xO(n) using queue or theta(n) x theta(w) where w is width of BT. 
@@ -133,6 +152,15 @@ void bft(Node* root){
 // from top to bottom (level wise) will not be maintained within a level.
 
 /* 
+
+VOT for the below tree is:
+4
+2
+1 5 6
+3 8 10
+7 11
+9 12
+
 In this case 12 printed before 9 b/o preorder traversal. You can store map<int, map<int, int>> while 
 first map is based on hd and second map is (..., int height=1) which is passed as another param in dfs function
              1

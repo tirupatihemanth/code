@@ -1,4 +1,4 @@
-#include <bits/stdc++.h>
+#include "leetcode.h"
 
 #define f(i,n) for(int i=0;i<n;i++)
 #define hyp(a,b) sqrt(a*a+b*b)
@@ -341,7 +341,8 @@ void quick_sort(vector<int>& v, int start, int end){
 
 void counting_sort(vector<int>& v){
     int max = *max_element(v.begin(), v.end()), min = *min_element(v.begin(), v.end()); 
-    int count[max-min+1]={0};
+    int count[max-min+1];
+    fill(count, count + max-min+1, 0);
     int output[v.size()];
     for(int a:v)count[a-min]++;
     partial_sum(count, count+(max-min+1), count);
@@ -585,7 +586,8 @@ void max_guests(vector<int>& entry, vector<int>& exit){
 
     //O(max_depart_time)xO(max_depart_time)
     int max = *max_element(exit.begin(), exit.end());
-    int arr[max+1]={0};
+    int arr[max+1];
+    fill(arr, arr+max+1, 0);
     f(i,entry.size()){
         arr[entry[i]]++;
         arr[exit[i]]--;
